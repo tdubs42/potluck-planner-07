@@ -33,3 +33,14 @@ describe('[GET] /api/users', () => {
     expect(res.type).toBe('application/json')
   })
 })
+
+describe('[GET] /api/users/:id', () => {
+  it('should return a 200 OK status', async () => {
+    const res = await request(server).get('/api/users/1')
+    expect(res.status).toBe(200)
+  })
+  it('should return with the requested user', async () => {
+    const res = await request(server).get('/api/users/1')
+    expect(res.body).toHaveProperty('username', 'test1')
+  })
+})
