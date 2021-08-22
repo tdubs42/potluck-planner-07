@@ -63,3 +63,18 @@ describe('[PUT] /api/users/:id', () => {
   })
 })
 
+describe('[DELETE] /api/users/:id', () => {
+  it('returns with a 202 accepted status', async () => {
+    const res = await request(server).delete('/api/users/4')
+    expect(res.status).toBe(202)
+  })
+  it('deletes a user from the database', async () => {
+    await request(server).delete('/api/users/1')
+    const currentUsers = await db('users')
+    expect(currentUsers).toHaveLength(2)
+  })
+  it('deletes the CORRECT item from the database', async () => {
+    const res = await request(server).delete('/api/users/1')
+    expect(res.body).toMatchObject({ user_id: 1, username: 'test1' })
+  })
+})

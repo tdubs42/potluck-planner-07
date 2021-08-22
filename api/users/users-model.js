@@ -34,6 +34,6 @@ async function update(id, newInfo) {
 
 async function remove(id) {
     const removed = await db('users').where('user_id', id).first()
-    await db('users').del().where('id', id)
+    await db('users').del().where('user_id', id)
     return removed
 }

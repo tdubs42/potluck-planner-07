@@ -42,4 +42,12 @@ router.post('/', validateUser, usernameIsUnique, async (req, res, next) => {
         })
   })
 
+  router.delete('/:id', async (req, res, next) => {
+      try {
+          res.status(202).json(await Users.remove(req.params.id))
+      } catch (err) {
+          next()
+      }
+  })
+
 module.exports = router

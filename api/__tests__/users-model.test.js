@@ -48,4 +48,15 @@ describe('User db access functions', () => {
             expect(newUser).toMatchObject(user)
         })
     })
+    describe('Users.remove', () => {
+        it('removes a user from the table', async () => {
+            await Users.remove(4)
+            const currentUsers = await db('users')
+            expect(currentUsers).toHaveLength(3)
+        })
+        it('returns the deleted user', async () => {
+            const removed = await Users.remove(1)
+            expect(removed).toMatchObject({ user_id: 1, username: 'test1' })
+        })
+    })
 })
