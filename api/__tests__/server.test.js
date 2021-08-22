@@ -22,3 +22,14 @@ describe('server.js', () => {
     expect(process.env.NODE_ENV).toBe('testing')
   })
 })
+
+describe('[GET] /api/users', () => {
+  it('should return a 200 OK status', async () => {
+    const res = await request(server).get('/api/users')
+    expect (res.status).toBe(200)
+  })
+  it('should return JSON', async () => {
+    const res = await request(server).get('/api/users')
+    expect(res.type).toBe('application/json')
+  })
+})
