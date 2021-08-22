@@ -44,3 +44,15 @@ describe('[GET] /api/users/:id', () => {
     expect(res.body).toHaveProperty('username', 'test1')
   })
 })
+
+describe('[POST] /api/users', () => {
+  it('returns with a 201 OK status', async () => {
+    const res = await request(server).post('/api/users').send({ username: 'foo', password:'1234' })
+    expect(res.status).toBe(201)
+  })
+  it('returns the newly created user', async () => {
+    let res = await request(server).post('/api/users').send({ username: 'foo2', password: '1234' })
+    expect(res.body).toMatchObject({ username: 'foo2', password: '1234' })
+  })
+})
+

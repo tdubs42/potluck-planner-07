@@ -22,9 +22,11 @@ function findById(id) {
 }
 
 async function add(user) {
-    const [id] = await db('users').insert(user)
-    return findById(id)
+    return db('users').insert(user, 'user_id').then(([id]) => {
+        return findById(id)
+    })
 }
+
 
 async function update(id) {
     const updated = await db('users').where('user_id', id).first()

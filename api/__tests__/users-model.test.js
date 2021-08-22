@@ -35,4 +35,17 @@ describe('User db access functions', () => {
             expect(user).toHaveProperty('username', 'test2')
         })
     })
+    describe('Users.add', () => {
+        it('adds a new user to the table', async () => {
+            const newUser = { username: 'foo', password: '1234'}
+            await Users.add(newUser)
+            const users = await db('users')
+            expect(users).toHaveLength(4)
+        })
+        it('returns the newly created user', async () => {
+            const user = { username: 'foo', password: '1234'}
+            const newUser = await Users.add(user)
+            expect(newUser).toMatchObject(user)
+        })
+    })
 })
