@@ -28,4 +28,18 @@ router.post('/', validateUser, usernameIsUnique, async (req, res, next) => {
         .catch(next)
   })
 
+  router.put('/:id', validateUser, (req, res, next) => {
+    const id = req.params.id
+    const changes = req.body
+    Users.update(id, changes)
+        .then((change) => {
+            if( change === 1) {
+                Users.findById(id)
+                    .then(user => {
+                        res.status(200).json({ message: `${user.username} has been updated`, user})
+                    })
+            }
+        })
+  })
+
 module.exports = router

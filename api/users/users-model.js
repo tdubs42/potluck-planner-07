@@ -27,11 +27,9 @@ async function add(user) {
     })
 }
 
-
-async function update(id) {
-    const updated = await db('users').where('user_id', id).first()
-    await db('users').update().where('user_id', id)
-    return updated
+async function update(id, newInfo) {
+    return  db('users').where('user_id', id).update(newInfo)
+    
 }
 
 async function remove(id) {

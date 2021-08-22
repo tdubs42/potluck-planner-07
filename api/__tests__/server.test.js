@@ -56,3 +56,10 @@ describe('[POST] /api/users', () => {
   })
 })
 
+describe('[PUT] /api/users/:id', () => {
+  it('returns with a 200 OK status', async () => {
+    const res = await request(server).put('/api/users/1').send({ username: 'test1', password: '1234'})
+    expect(res.status).toBe(200)
+  })
+})
+
