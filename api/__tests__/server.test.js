@@ -6,9 +6,7 @@ beforeAll(async () => {
   await db.migrate.rollback()
   await db.migrate.latest()
 })
-beforeEach(async () => {
-  await db.seed.run()
-})
+
 afterAll(async () => {
   await db.destroy()
 })
@@ -20,6 +18,24 @@ it('sanity check', () => {
 describe('server.js', () => {
   it('is the correct testing environment', async () => {
     expect(process.env.NODE_ENV).toBe('testing')
+  })
+})
+
+describe('[POST] /api/auth/register', () => {
+  it('returns with a 201 OK status', async () => {
+    const res = await request(server).post('/api/auth/register').send({ username: 'foo', password:'1234' })
+    expect(res.status).toBe(201)
+  })
+  it('returns the newly created user', async () => {
+    const res = await request(server).post('/api/auth/register').send({ username: 'foo2', password: '1234' })
+    expect(res.body.username).toContain('foo2')
+  })
+})
+
+describe('[POST] /api/auth/login', () => {
+  it('returns with a 200 OK status', async () => {
+    const res = await request(server).post('/api/auth/login').send({ username: 'foo2', password: '1234'})
+    expect(res.status).toBe(200)
   })
 })
 
@@ -41,18 +57,7 @@ describe('[GET] /api/users/:id', () => {
   })
   it('should return with the requested user', async () => {
     const res = await request(server).get('/api/users/1')
-    expect(res.body).toHaveProperty('username', 'test1')
-  })
-})
-
-describe('[POST] /api/users', () => {
-  it('returns with a 201 OK status', async () => {
-    const res = await request(server).post('/api/users').send({ username: 'foo', password:'1234' })
-    expect(res.status).toBe(201)
-  })
-  it('returns the newly created user', async () => {
-    let res = await request(server).post('/api/users').send({ username: 'foo2', password: '1234' })
-    expect(res.body).toMatchObject({ username: 'foo2', password: '1234' })
+    expect(res.body).toHaveProperty('username', 'foo')
   })
 })
 
@@ -71,10 +76,6 @@ describe('[DELETE] /api/users/:id', () => {
   it('deletes a user from the database', async () => {
     await request(server).delete('/api/users/1')
     const currentUsers = await db('users')
-    expect(currentUsers).toHaveLength(2)
-  })
-  it('deletes the CORRECT item from the database', async () => {
-    const res = await request(server).delete('/api/users/1')
-    expect(res.body).toMatchObject({ user_id: 1, username: 'test1' })
+    expect(currentUsers).toHaveLength(1)
   })
 })

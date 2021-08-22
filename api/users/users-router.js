@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Users = require('./users-model')
-const { validateUser, usernameIsUnique } = require('../middleware/users-middleware')
+const { validateUser } = require('../middleware/users-middleware')
 
 router.get('/', (req, res, next) => {
     Users.findAll()
@@ -19,14 +19,6 @@ router.get('/:id', (req, res, next) => {
         })
         .catch(next)
 })
-
-router.post('/', validateUser, usernameIsUnique, async (req, res, next) => {
-    await Users.add(req.body)
-        .then(user => {
-            res.status(201).json(user)
-        })
-        .catch(next)
-  })
 
   router.put('/:id', validateUser, (req, res, next) => {
     const id = req.params.id

@@ -56,7 +56,7 @@ describe('User db access functions', () => {
         })
         it('returns the deleted user', async () => {
             const removed = await Users.remove(1)
-            expect(removed).toMatchObject({ user_id: 1, username: 'test1' })
+            expect(removed).toMatchObject({ username: 'test1', password: '1234' })
         })
     })
 })
