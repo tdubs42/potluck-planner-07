@@ -29,5 +29,28 @@ router.post('/', validateEvent, (req, res, next) => {
         .catch(next)
 })
 
+router.put('/:id', validateEvent, (req, res, next) => {
+    const id = req.params.id
+    const changes = req.body
+    Events.update(id, changes)
+        .then((change) => {
+            if(change === 1) {
+                Events.findById(id)
+                    .then(event => {
+                        res.status(200).json({ message: `Event ${event.title} has been updated`, event})
+                    })
+                    .catch(next)
+            }
+        })
+        .catch(next)
+})
+
+router.delete('/:id', async (req, res, next) => {
+    try {
+        res.status(202).json(await Events.remove(req.params.id))
+    } catch (err) {
+        next()
+    }
+})
 
 module.exports = router
