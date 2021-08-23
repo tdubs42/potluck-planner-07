@@ -1,6 +1,7 @@
 const request = require('supertest')
 const server = require('../server')
 const db = require('../data/db-config')
+const { set } = require('../server')
 
 beforeAll(async () => {
   await db.migrate.rollback()
@@ -86,7 +87,7 @@ describe('/api/users', () => {
 })
 
 describe('/api/events', () => {
-
+  
   describe('[POST] /api/events', () => {
     it('returns with a 201 OK status', async () => {
       const newEvent = {title: 'test4', month: 'October', day: 31, year: 2021, location: 'Pittsburgh, PA'}
@@ -102,7 +103,9 @@ describe('/api/events', () => {
 
   describe('[GET] /api/events', () => {
     it('should return a 200 OK status', async () => {
-      const res = await request(server).get('/api/events')
+      await request(server).post('/api/auth/register').send({ username: 'test1', password: '1234'})
+      const login = await request(server).post('/api/auth/login').send({ username: 'test1', password: '1234' })
+      const res = await request(server).get('/api/events').set({ authorization: login.body.token })
       expect (res.status).toBe(200)
     })
     it('should return JSON', async () => {
@@ -110,7 +113,9 @@ describe('/api/events', () => {
       expect(res.type).toBe('application/json')
     })
     it('should recieve the correct number of events',async () => {
-      const res = await request(server).get('/api/events')
+      await request(server).post('/api/auth/register').send({ username: 'test1', password: '1234'})
+      const login = await request(server).post('/api/auth/login').send({ username: 'test1', password: '1234' })
+      const res = await request(server).get('/api/events').set({ authorization: login.body.token })
       expect(res.body).toHaveLength(2)
     })
   })
