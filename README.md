@@ -16,15 +16,11 @@
 user_id: 1,
 username: "test1",
 password: "1234",
-created_at: "2021-08-22T17:44:02.898Z",
-updated_at: "2021-08-22T17:44:02.898Z"
 },
 {
 user_id: 2,
 username: "test2",
 password: "1234",
-created_at: "2021-08-22T17:44:02.898Z",
-updated_at: "2021-08-22T17:44:02.898Z"
 }
 ]
 ```
