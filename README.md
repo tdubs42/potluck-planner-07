@@ -37,14 +37,14 @@ password: "1234",
 | Method   | URL                | Description                                                                                            |
 | ------   | --------------     | ------------------------------------------------------------------------------------------------------ |
 | [GET]    | /api/users/        | Returns an array filled with user objects.                                                             |
-| [GET]    | /api/users/:id     | Returns the user object with the specified `id`.                                                       |
-| [DELETE] | /api/users/:id     | Removes the user with the specified `id` and returns the deleted user.                                 |
-| [PUT]    | /api/users/:id     | Updates the user with the specified `id` using data from the `request body`. Returns the modified user |
+| [GET]    | /api/users/:id     | Returns the user object with the specified `user_id`.                                                       |
+| [DELETE] | /api/users/:id     | Removes the user with the specified `user_id` and returns the deleted user.                                 |
+| [PUT]    | /api/users/:id     | Updates the user with the specified `user_id` using data from the `request body`. Returns the modified user |
 
 #### Events: 
 | Method   | URL                 | Description                                                                                              |
 | ------   | --------------     | --------------------------------------------------------------------------------------------------------- |
 | [GET]    | /api/events/        | Returns an array filled with event objects.                                                              |
-| [GET]    | /api/events/:id     | Returns the event object with the specified `id`.                                                        |
-| [DELETE] | /api/events/:id     | Removes the event with the specified `id` and returns the deleted event.                                 |
-| [PUT]    | /api/events/:id     | Updates the event with the specified `id` using data from the `request body`. Returns the modified event |
+| [GET]    | /api/events/:id     | Returns the event object with the specified `event_id`.                                                        |
+| [DELETE] | /api/events/:id     | Removes the event with the specified `event_id` and returns the deleted event.                                 |
+| [PUT]    | /api/events/:id     | Updates the event with the specified `event_id` using data from the `request body`. Returns the modified event |
