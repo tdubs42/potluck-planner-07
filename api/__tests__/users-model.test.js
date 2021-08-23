@@ -13,6 +13,9 @@ beforeAll(async () => {
 beforeEach(async () => {
     await db.seed.run()
 })
+afterAll(async () => {
+    await db.destroy()
+  })
 
 describe('User db access functions', () => {
     describe('Users.findAll', () => {
