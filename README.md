@@ -3,10 +3,6 @@
 ## API url: https://potluck-planner-07.herokuapp.com/
 
 ### API Documentation:
-#### Authentication:
-
-[POST] /api/auth/register - requires a username and password - creates a new user
-[POST] /api/auth/login - requires a username and password - used to log in user
 
 #### Users:
 [GET] /api/users - returns an array filled with user objects similar to the following: 
