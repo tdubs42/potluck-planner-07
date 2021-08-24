@@ -26,28 +26,28 @@ describe('User db access functions', () => {
         })
         it('returns the correct user shape', async () => {
             const users = await Users.findAll()
-            expect(users[0]).toHaveProperty('username', 'test1')
+            expect(users[0]).toHaveProperty('username', 'fred')
         })
     })
     describe('Users.findById', () => {
         it('returns only one user', async () => {
             const user = await Users.findById(1)
-            expect(user).toMatchObject({ user_id: 1, username: 'test1' })
+            expect(user).toMatchObject({ user_id: 1, username: 'fred' })
         })
         it('returns the specified user requested', async () => {
             const user = await Users.findById(2)
-            expect(user).toHaveProperty('username', 'test2')
+            expect(user).toHaveProperty('username', 'shaggy')
         })
     })
     describe('Users.add', () => {
         it('adds a new user to the table', async () => {
-            const newUser = { username: 'foo', password: '1234'}
+            const newUser = { username: 'foo', password: '1234', name: 'foo', email: 'test@test.com'}
             await Users.add(newUser)
             const users = await db('users')
             expect(users).toHaveLength(4)
         })
         it('returns the newly created user', async () => {
-            const user = { username: 'foo', password: '1234'}
+            const user = { username: 'foo', password: '1234', name: 'foo', email: 'test@test.com'}
             const newUser = await Users.add(user)
             expect(newUser).toMatchObject(user)
         })
@@ -60,7 +60,7 @@ describe('User db access functions', () => {
         })
         it('returns the deleted user', async () => {
             const removed = await Users.remove(1)
-            expect(removed).toMatchObject({ username: 'test1', password: '1234' })
+            expect(removed).toHaveProperty('username', 'fred')
         })
     })
 })

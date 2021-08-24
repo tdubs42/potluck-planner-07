@@ -26,17 +26,17 @@ describe('Event db access functions', () => {
         })
         it('returns the correct event shape', async () => {
             const events = await Events.findAll()
-            expect(events[0]).toHaveProperty('title', 'test1')
+            expect(events[0]).toHaveProperty('title', `Fred's birthday`)
         })
     })
     describe('Events.findById', () => {
         it('returns only one event', async () => {
             const event = await Events.findById(1)
-            expect(event).toHaveProperty('title', 'test1')
+            expect(event).toHaveProperty('title', `Fred's birthday`)
         })
         it('returns the specified event requested', async () => {
             const event = await Events.findById(2)
-            expect(event).toHaveProperty('title', 'test2')
+            expect(event).toHaveProperty('title', `Shaggy's birthday`)
         })
     })
     describe('Events.add', () => {
@@ -60,7 +60,7 @@ describe('Event db access functions', () => {
         })
         it('returns the deleted event', async () => {
             const removed = await Events.remove(3)
-            expect(removed).toHaveProperty('title', 'test3')
+            expect(removed).toHaveProperty('title', `Scooby's birthday`)
         })
     })
 })

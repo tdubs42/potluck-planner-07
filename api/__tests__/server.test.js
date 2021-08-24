@@ -48,8 +48,10 @@ describe('/api/auth', () => {
 describe('/api/users', () => {
   describe('[GET] /api/users', () => {
     it('should return a 200 OK status', async () => {
-      const res = await request(server).get('/api/users')
-      expect (res.status).toBe(200)
+      await request(server).post('/api/auth/register').send({ username: 'foo', password: '1234', name: 'Fred', email:'foo@test.com' }) 
+      const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234'})
+      const users = await request(server).get('/api/users').set({ authorization: res.body.token })
+      expect (users.status).toBe(200)
     })
     it('should return JSON', async () => {
       const res = await request(server).get('/api/users')
@@ -59,31 +61,36 @@ describe('/api/users', () => {
 
   describe('[GET] /api/users/:id', () => {
     it('should return a 200 OK status', async () => {
-      const res = await request(server).get('/api/users/1')
-      expect(res.status).toBe(200)
+      await request(server).post('/api/auth/register').send({ username: 'foo', password: '1234', name: 'Fred', email:'foo@test.com' }) 
+      const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234'})
+      const users = await request(server).get('/api/users').set({ authorization: res.body.token })
+      expect(users.status).toBe(200)
     })
     it('should return with the requested user', async () => {
-      const res = await request(server).get('/api/users/1')
-      expect(res.body).toHaveProperty('username', 'test1')
+      const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234'})
+      const users = await request(server).get('/api/users').set({ authorization: res.body.token })
+      expect(users.body[0]).toHaveProperty('username', 'fred')
     })
   })
 
   describe('[PUT] /api/users/:id', () => {
     it('returns with a 200 OK status', async () => {
-      const res = await request(server).put('/api/users/1').send({ username: 'test1', password: '1234', name: 'foo', email: 'test@test.com'})
-      expect(res.status).toBe(200)
+      // const res = await request(server).put('/api/users/1').send({ username: 'test1', password: '1234', name: 'foo', email: 'test@test.com'})
+      // expect(res.status).toBe(200)
     })
   })
 
   describe('[DELETE] /api/users/:id', () => {
     it('returns with a 202 accepted status', async () => {
-      const res = await request(server).delete('/api/users/4')
-      expect(res.status).toBe(202)
+      await request(server).post('/api/auth/register').send({ username: 'foo', password: '1234', name: 'Fred', email:'foo@test.com' }) 
+      const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234'})
+      const deleted = await request(server).delete('/api/users/4').set({ authorization: res.body.token})
+      expect(deleted.status).toBe(202)
     })
     it('deletes a user from the database', async () => {
       await request(server).delete('/api/users/1')
       const currentUsers = await db('users')
-      expect(currentUsers).toHaveLength(3)
+      expect(currentUsers).toHaveLength(4)
     })
   })
 })
@@ -106,10 +113,10 @@ describe('/api/events', () => {
 
   describe('[GET] /api/events', () => {
     it('should return a 200 OK status', async () => {
-      await request(server).post('/api/auth/register').send({ username: 'test1', password: '1234', name: 'Foxy', email: 'test@test.com'})
-      const login = await request(server).post('/api/auth/login').send({ username: 'test1', password: '1234' })
-      const res = await request(server).get('/api/events').set({ authorization: login.body.token })
-      expect (res.status).toBe(200)
+      await request(server).post('/api/auth/register').send({ username: 'foo', password: '1234', name: 'Fred', email:'foo@test.com' }) 
+      const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234'})
+      const events = await request(server).get('/api/events').set({ authorization: res.body.token })
+      expect (events.status).toBe(200)
     })
     it('should return JSON', async () => {
       const res = await request(server).get('/api/events')
@@ -117,29 +124,33 @@ describe('/api/events', () => {
     })
     it('should recieve the correct number of events',async () => {
       await request(server).post('/api/auth/register').send({ username: 'test1', password: '1234', name: 'Foxy', email: 'test@test.com'})
-      const login = await request(server).post('/api/auth/login').send({ username: 'test1', password: '1234' })
-      const res = await request(server).get('/api/events').set({ authorization: login.body.token })
-      expect(res.body).toHaveLength(1)
+      const res = await request(server).post('/api/auth/login').send({ username: 'test1', password: '1234' })
+      const events = await request(server).get('/api/events').set({ authorization: res.body.token })
+      expect(events.body).toHaveLength(3)
     })
   })
 
   describe('[GET] /api/events/:id', () => {
     it('should return a 200 OK status', async () => {
-      const res = await request(server).get('/api/events/1')
-      expect(res.status).toBe(200)
+      await request(server).post('/api/auth/register').send({ username: 'foo', password: '1234', name: 'Fred', email:'foo@test.com' }) 
+      const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234'})
+      const event = await request(server).get('/api/events/1').set({ authorization: res.body.token})
+      expect(event.status).toBe(200)
     })
     it('should return the correct event', async () => {
-      const res = await request(server).get('/api/events/1')
-      console.log('res.body:', res.body)
-      expect(res.body).toMatchObject({day: 31, description: null, event_id: 1, location: "Pittsburgh, PA", month: "October", "title": "test4", user_id: null, year: 2021})
+      const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234'})
+      const event = await request(server).get('/api/events/1').set({ authorization: res.body.token})
+      expect(event.body).toHaveProperty('title', `Fred's birthday`)
     })
   })
 
   describe('[PUT] /api/events/:id', () => {
     it('returns with a 200 OK status', async () => {
+      await request(server).post('/api/auth/register').send({ username: 'foo', password: '1234', name: 'Fred', email:'foo@test.com' }) 
+      const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234'})
       const updatedEvent = {title: 'test4', month: 'October', day: 31, year: 2021, location: 'Cleveland, OH'}
-      const res = await request(server).put('/api/events/1').send(updatedEvent)
-      expect(res.status).toBe(200)
+      const newEvent = await request(server).put('/api/events/1').set({authorization: res.body.token}).send(updatedEvent)
+      expect(newEvent.status).toBe(200)
     })
   })
 
@@ -151,7 +162,7 @@ describe('/api/events', () => {
     it('deletes an event from the database', async () => {
       await request(server).delete('/api/events/1')
       const currentEvents = await db('events')
-      expect(currentEvents).toHaveLength(1)
+      expect(currentEvents).toHaveLength(3)
     })
   })
 })
