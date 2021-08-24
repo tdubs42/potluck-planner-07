@@ -1,3 +1,3 @@
 module.exports = {
-    TOKEN_SECRET: process.env.TOKEN_SECRET || 'fallback',
+    secret: process.env.TOKEN_SECRET || 'fallback',
 }

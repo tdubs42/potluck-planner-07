@@ -15,7 +15,7 @@ server.use(cors())
 
 server.use('/api/users', restricted, userRouter)
 server.use('/api/auth', authRouter)
-server.use('/api/events', eventRouter)
+server.use('/api/events', restricted, eventRouter)
 
 server.use((err, req, res, next) => { //eslint-disable-line
   res.status(500).json({ message: err.message })
