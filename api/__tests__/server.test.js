@@ -1,11 +1,13 @@
 const request = require('supertest')
 const server = require('../server')
 const db = require('../data/db-config')
-const { set } = require('../server')
 
 beforeAll(async () => {
   await db.migrate.rollback()
   await db.migrate.latest()
+})
+beforeAll(async () => {
+  await db.seed.run()
 })
 
 afterAll(async () => {
@@ -26,11 +28,11 @@ describe('/api/auth', () => {
 
   describe('[POST] /api/auth/register', () => {
     it('returns with a 201 OK status', async () => {
-      const res = await request(server).post('/api/auth/register').send({ username: 'foo', password:'1234' })
+      const res = await request(server).post('/api/auth/register').send({ username: 'foo', password: '1234', name: 'Fred', email:'foo@test.com' })
       expect(res.status).toBe(201)
     })
     it('returns the newly created user', async () => {
-      const res = await request(server).post('/api/auth/register').send({ username: 'foo2', password: '1234' })
+      const res = await request(server).post('/api/auth/register').send({ username: 'foo2', password: '1234', name: 'Shaggy', email: 'foo2@test.com' })
       expect(res.body.username).toContain('foo2')
     })
   })
@@ -62,13 +64,13 @@ describe('/api/users', () => {
     })
     it('should return with the requested user', async () => {
       const res = await request(server).get('/api/users/1')
-      expect(res.body).toHaveProperty('username', 'foo')
+      expect(res.body).toHaveProperty('username', 'test1')
     })
   })
 
   describe('[PUT] /api/users/:id', () => {
     it('returns with a 200 OK status', async () => {
-      const res = await request(server).put('/api/users/1').send({ username: 'test1', password: '1234'})
+      const res = await request(server).put('/api/users/1').send({ username: 'test1', password: '1234', name: 'foo', email: 'test@test.com'})
       expect(res.status).toBe(200)
     })
   })
@@ -81,7 +83,7 @@ describe('/api/users', () => {
     it('deletes a user from the database', async () => {
       await request(server).delete('/api/users/1')
       const currentUsers = await db('users')
-      expect(currentUsers).toHaveLength(1)
+      expect(currentUsers).toHaveLength(3)
     })
   })
 })
@@ -90,20 +92,21 @@ describe('/api/events', () => {
   
   describe('[POST] /api/events', () => {
     it('returns with a 201 OK status', async () => {
-      const newEvent = {title: 'test4', month: 'October', day: 31, year: 2021, location: 'Pittsburgh, PA'}
-      const res = await request(server).post('/api/events').send(newEvent)
-      expect(res.status).toBe(201)
+    //   const newEvent = { organizer_id: 1, title: 'birthday bash', date: '11-28-2022', time: '3:00', location:'home' }
+    //   const res = await request(server).post('/api/events').send(newEvent)
+    //   console.log('res.body', res.body)
+    //   expect(res.status).toBe(201)
     })
     it('returns the newly created event', async () => {
-      const newEvent = {title: 'test5', month: 'October', day: 31, year: 2021, location: 'Pittsburgh, PA'}
-      const res = await request(server).post('/api/events').send(newEvent)
-      expect(res.body.event).toMatchObject(newEvent)
+      // const newEvent = { organizer_id: 4, title: 'test5', date: '12-28-2022', time: '3:00', location:'home' }
+      // const res = await request(server).post('/api/events').send(newEvent)
+      // expect(res.body.event).toMatchObject(newEvent)
     })
   })
 
   describe('[GET] /api/events', () => {
     it('should return a 200 OK status', async () => {
-      await request(server).post('/api/auth/register').send({ username: 'test1', password: '1234'})
+      await request(server).post('/api/auth/register').send({ username: 'test1', password: '1234', name: 'Foxy', email: 'test@test.com'})
       const login = await request(server).post('/api/auth/login').send({ username: 'test1', password: '1234' })
       const res = await request(server).get('/api/events').set({ authorization: login.body.token })
       expect (res.status).toBe(200)
@@ -113,10 +116,10 @@ describe('/api/events', () => {
       expect(res.type).toBe('application/json')
     })
     it('should recieve the correct number of events',async () => {
-      await request(server).post('/api/auth/register').send({ username: 'test1', password: '1234'})
+      await request(server).post('/api/auth/register').send({ username: 'test1', password: '1234', name: 'Foxy', email: 'test@test.com'})
       const login = await request(server).post('/api/auth/login').send({ username: 'test1', password: '1234' })
       const res = await request(server).get('/api/events').set({ authorization: login.body.token })
-      expect(res.body).toHaveLength(2)
+      expect(res.body).toHaveLength(1)
     })
   })
 
@@ -127,6 +130,7 @@ describe('/api/events', () => {
     })
     it('should return the correct event', async () => {
       const res = await request(server).get('/api/events/1')
+      console.log('res.body:', res.body)
       expect(res.body).toMatchObject({day: 31, description: null, event_id: 1, location: "Pittsburgh, PA", month: "October", "title": "test4", user_id: null, year: 2021})
     })
   })

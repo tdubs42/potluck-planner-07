@@ -3,8 +3,9 @@ const router = express.Router()
 const Events = require('./events-model')
 const { validateEvent } = require('../middleware/events-middleware')
 const { restricted } = require('../auth/auth-middleware')
+const dbConfig = require('../data/db-config')
 
-router.get('/', restricted, (req, res, next) => {
+router.get('/', (req, res, next) => {
     Events.findAll()
     .then(events => {
         res.status(200).json(events)
@@ -21,7 +22,7 @@ router.get('/:id', (req, res, next) => {
     .catch(next)
 })
 
-router.post('/', validateEvent, (req, res, next) => {
+router.post('/',  (req, res, next) => {
     const newEvent = req.body
     Events.add(newEvent)
         .then(event => {
@@ -51,6 +52,44 @@ router.delete('/:id', async (req, res, next) => {
         res.status(202).json(await Events.remove(req.params.id))
     } catch (err) {
         next()
+    }
+})
+
+// Guests functions
+router.get('/:id/guests', async (req, res, next) => {
+    await Events.findGuestsByEvent(req.params.id)
+        .then(guests => {
+            res.status(200).json(guests)
+        })
+        .catch(next)
+})
+
+router.post('/:id/guests', async (req, res, next) => {
+    const newGuest = req.body
+    await Events.addGuest(req.params.id, newGuest)
+        .then(guest => {
+            res.status(201).json({ message: `You have successfully added a guest to the event list.`, guest})
+        })
+        .next(error)
+})
+
+router.delete('/:id/guests', async (req, res, next) => {
+    try {
+        if(!req.body.user_id) {
+            return res.status(400).json({ message: 'A user_id is required'})
+        } else {
+            const count = await Events.removeGuest(req.params.id, req.body.user_id)
+            if (count !== 0) {
+				const guests = await Events.findGuestsByEvent(req.params.id);
+				res.status(200).json(guests)
+			} else {
+				res.status(404).json({
+					message: 'Guest not found'
+				})
+            }
+        } 
+    } catch (error) {
+		next(error)
     }
 })
 

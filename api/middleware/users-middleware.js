@@ -10,6 +10,10 @@ function validateUser(req, res, next) {
         res.status(422).json({ message: 'A username is required'})
     } else if (!req.body.password || !req.body.password.trim()) {
         res.status(422).json({ message: 'A password is required'})
+    } else if (!req.body.name || !req.body.name.trim()) {
+        res.status(422).json({ message: 'A name is required'})
+    } else if (!req.body.email || !req.body.email.trim()) {
+        res.status(422).json({ message: 'An email is required'})
     } else {
         next()
     }

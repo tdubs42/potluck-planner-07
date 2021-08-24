@@ -44,3 +44,10 @@ password: "1234",
 | [GET]    | /api/events/:id     | Returns the event object with the specified `event_id`.                                                        |
 | [DELETE] | /api/events/:id     | Removes the event with the specified `event_id` and returns the deleted event.                                 |
 | [PUT]    | /api/events/:id     | Updates the event with the specified `event_id` using data from the `request body`. Returns the modified event |
+
+#### Guests:
+| Method   | URL                        | Description                                                                                                 |
+| ------   | --------------             | ---------------------------------------------------------------------------------------------------------   |
+| [GET]    | /api/events/:id/guests     | Returns an array filled with guests attending the event.                                                    |
+| [POST]   | /api/events/:id/guests     | Requires a `user_id` and a boolean of `attending` (true or false). Adds a guest to the event.               |
+| [DELETE] | /api/events/:id/guests     | Requires `user_id` Removes the guest with the specified `user_id` and returns the new list of guests.       |

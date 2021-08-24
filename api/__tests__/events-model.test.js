@@ -41,15 +41,15 @@ describe('Event db access functions', () => {
     })
     describe('Events.add', () => {
         it('adds a new event to the table', async () => {
-            const newEvent = {title: 'test5', month: 'October', day: 31, year: 2021, location: 'Pittsburgh, PA'}
+            const newEvent = { organizer_id: 1, title: 'birthday bash', date: '11-28-2022', time: '3:00', location:'home' }
             await Events.add(newEvent)
             const events = await db('events')
             expect(events).toHaveLength(4)
         })
         it('returns the newly created event', async () => {
-            const event = {title: 'test6', month: 'Nov', day: 28, year: 2021, location: 'Salineville, OH'}
+            const event = { organizer_id: 1, title: 'birthday bash', date: '11-28-2022', time: '3:00', location:'home' }
             const newEvent = await Events.add(event)
-            expect(newEvent).toMatchObject(event)
+            expect(newEvent).toHaveProperty('title', 'birthday bash')
         })
     })
     describe('Events.remove', () => {
@@ -60,7 +60,7 @@ describe('Event db access functions', () => {
         })
         it('returns the deleted event', async () => {
             const removed = await Events.remove(3)
-            expect(removed).toMatchObject({title: 'test3', month: 'July', day: 14, year: 2022, location: 'home'})
+            expect(removed).toHaveProperty('title', 'test3')
         })
     })
 })
