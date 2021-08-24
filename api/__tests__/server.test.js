@@ -148,7 +148,7 @@ describe('/api/events', () => {
     it('returns with a 200 OK status', async () => {
       await request(server).post('/api/auth/register').send({ username: 'foo', password: '1234', name: 'Fred', email:'foo@test.com' }) 
       const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234'})
-      const updatedEvent = {title: 'test4', month: 'October', day: 31, year: 2021, location: 'Cleveland, OH'}
+      const updatedEvent = { organizer_id: 1, title: 'birthday bash', date: '11-28-2022', time: '3:00', location:'home' }
       const newEvent = await request(server).put('/api/events/1').set({authorization: res.body.token}).send(updatedEvent)
       expect(newEvent.status).toBe(200)
     })
@@ -156,8 +156,10 @@ describe('/api/events', () => {
 
   describe('[DELETE] /api/events/:id', () => {
     it('returns with a 202 accepted status', async () => {
-      const res = await request(server).delete('/api/events/4')
-      expect(res.status).toBe(202)
+      await request(server).post('/api/auth/register').send({ username: 'foo', password: '1234', name: 'Fred', email:'foo@test.com' }) 
+      const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234'})
+      const deleted = await request(server).delete('/api/events/4').set({ authorization : res.body.token})
+      expect(deleted.status).toBe(202)
     })
     it('deletes an event from the database', async () => {
       await request(server).delete('/api/events/1')
