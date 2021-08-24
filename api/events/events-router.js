@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const Events = require('./events-model')
 const { validateEvent } = require('../middleware/events-middleware')
-const { restricted } = require('../auth/auth-middleware')
 
 router.get('/', (req, res, next) => {
     Events.findAll()
