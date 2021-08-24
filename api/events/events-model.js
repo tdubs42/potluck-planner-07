@@ -9,7 +9,11 @@ module.exports = {
     remove,
     addGuest,
     findGuestsByEvent,
-    removeGuest
+    removeGuest,
+    addItem,
+    findItemsByEvent,
+    updateItem,
+    removeItem
 }
 
 function findAll() {
@@ -53,10 +57,42 @@ function findGuestsByEvent(id) {
 			.join('guests as g', 'g.event_id', 'e.event_id')
 			.join('users as u', 'u.user_id', 'g.user_id')
 			.where('e.event_id', id)
-			.select('u.user_id', 'u.username')
+			.select('u.user_id', 'u.name', 'g.attending')
 			.orderBy('u.user_id')
 }
 
 async function removeGuest(event_id, user_id) {
     return db('guests').del().where({ event_id, user_id })
+}
+
+async function addItem(event_id, item) {
+    return db("items")
+        .insert({
+            event_id,
+            item_name: item.item_name
+        })
+        .returning()
+        .then(() => findItemsByEvent(event_id));
+}
+
+function findItemsByEvent(id) {
+    return db('items as i')
+            .join('events as e', 'i.event_id', 'e.event_id')
+            .leftJoin('users as u', 'u.user_id', 'i.user_id')
+            .where('e.event_id', id)
+            .select('i.item_name', 'u.name', 'e.title')
+            .orderBy('i.item_name')
+}
+
+async function updateItem(event_id, newInfo) {
+    return db('items')
+             .where({ event_id, item_name: newInfo.item_name})
+             .update(newInfo)
+             .then(count => (count !== 0 ? findItemsByEvent(event_id) : null))
+}
+
+async function removeItem(event_id, item_name) {
+    return db('items')
+            .del()
+            .where({ event_id, item_name})
 }

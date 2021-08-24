@@ -20,9 +20,7 @@ password: "1234",
 }
 ]
 ```
-[GET] /api/users/:id - Requires a `user_id` - Returns a single user object
-[PUT] /api/users/:id - Requires the `user_id` being updated and changes to be made - Updates and returns with specified user
-[DELETE] - Requires the id being deleted - Deletes and returns the specified user
+
 #### Authentication:
 | Method   | URL                | Description                                                                                            |
 | ------   | --------------     | ------------------------------------------------------------------------------------------------------ |
@@ -51,3 +49,10 @@ password: "1234",
 | [GET]    | /api/events/:id/guests     | Returns an array filled with guests attending the event.                                                    |
 | [POST]   | /api/events/:id/guests     | Requires a `user_id` and a boolean of `attending` (true or false). Adds a guest to the event.               |
 | [DELETE] | /api/events/:id/guests     | Requires `user_id` Removes the guest with the specified `user_id` and returns the new list of guests.       |
+
+#### Items:
+| Method   | URL                        | Description                                                                                                 |
+| ------   | --------------             | ---------------------------------------------------------------------------------------------------------   |
+| [GET]    | /api/events/:id/items     | Returns an array filled with items for the event.                                                    |
+| [POST]   | /api/events/:id/items     | Requires a `item_id` and adds the new item to the list of items               |
+| [DELETE] | /api/events/:id/items     | Requires `item_name` Removes the item with the specified `item_name` and returns the new list of items.       |

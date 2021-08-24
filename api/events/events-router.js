@@ -3,7 +3,6 @@ const router = express.Router()
 const Events = require('./events-model')
 const { validateEvent } = require('../middleware/events-middleware')
 const { restricted } = require('../auth/auth-middleware')
-const dbConfig = require('../data/db-config')
 
 router.get('/', (req, res, next) => {
     Events.findAll()
@@ -70,7 +69,7 @@ router.post('/:id/guests', async (req, res, next) => {
         .then(guest => {
             res.status(201).json({ message: `You have successfully added a guest to the event list.`, guest})
         })
-        .next(error)
+        .catch(next)
 })
 
 router.delete('/:id/guests', async (req, res, next) => {
@@ -90,6 +89,41 @@ router.delete('/:id/guests', async (req, res, next) => {
         } 
     } catch (error) {
 		next(error)
+    }
+})
+
+// Item functions
+router.get('/:id/items', async (req, res, next) => {
+    await Events.findItemsByEvent(req.params.id)
+            .then(items => {
+                res.status(200).json(items)
+            })
+            .catch(next)
+})
+
+router.post('/:id/items', async (req, res) => {
+    await Events.addItem(req.params.id, req.body)
+             .then(item => {
+                 res.status(201).json(item)
+             })
+             .catch(next)
+})
+
+router.delete('/:id/items', async (req, res, next) => {
+    try {
+        if(!req.body.item_name) {
+            return res.status(400).json({ message: 'An item name is required'})
+        } else {
+            const count = await Events.removeItem(req.params.id, req.body.item_name)
+            if (count !== 0) {
+                const items = await Events.findItemsByEvent(req.params.id)
+                res.status(200).json(items)
+            } else {
+                res.status(404).json({ message: 'Item not found'})
+            }
+        }
+    } catch (err) {
+        next(err)
     }
 })
 
