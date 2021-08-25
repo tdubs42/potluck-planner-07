@@ -29,7 +29,7 @@ router.post('/',  (req, res, next) => {
         .catch(next)
 })
 
-router.put('/:id', validateEvent, (req, res, next) => {
+router.put('/:id', (req, res, next) => {
     const id = req.params.id
     const changes = req.body
     Events.update(id, changes)
@@ -67,6 +67,21 @@ router.post('/:id/guests', async (req, res, next) => {
     await Events.addGuest(req.params.id, newGuest)
         .then(guest => {
             res.status(201).json({ message: `You have successfully added a guest to the event list.`, guest})
+        })
+        .catch(next)
+})
+router.put('/:id/guests', (req, res, next) => {
+    const id = req.params.id
+    const changes = req.body
+    Events.updateGuest(id, changes)
+        .then((change) => {
+            if(change === 1) {
+                Events.findById(id)
+                    .then(event => {
+                        res.status(200).json({ message: `Event ${event.title} has been updated`, event})
+                    })
+                    .catch(next)
+            }
         })
         .catch(next)
 })

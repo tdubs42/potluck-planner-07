@@ -9,6 +9,7 @@ module.exports = {
     remove,
     addGuest,
     findGuestsByEvent,
+    updateGuest,
     removeGuest,
     addItem,
     findItemsByEvent,
@@ -59,6 +60,14 @@ function findGuestsByEvent(id) {
 			.where('e.event_id', id)
 			.select('u.user_id', 'u.name', 'g.attending')
 			.orderBy('u.user_id')
+}
+
+function updateGuest(event_id, user_id, changes) {
+    return db("guests")
+			.where({ event_id, user_id })
+			.returning()
+			.update(changes)
+			.then(count => (count !== 0 ? findGuestsByEvent(event_id) : null))
 }
 
 async function removeGuest(event_id, user_id) {

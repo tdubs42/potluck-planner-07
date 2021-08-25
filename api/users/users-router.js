@@ -20,7 +20,7 @@ router.get('/:id', (req, res, next) => {
         .catch(next)
 })
 
-  router.put('/:id', validateUser, (req, res, next) => {
+  router.put('/:id', (req, res, next) => {
     const id = req.params.id
     const changes = req.body
     Users.update(id, changes)
