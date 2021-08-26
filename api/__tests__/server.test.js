@@ -158,13 +158,13 @@ describe('/api/events', () => {
     it('returns with a 202 accepted status', async () => {
       await request(server).post('/api/auth/register').send({ username: 'foo', password: '1234', name: 'Fred', email:'foo@test.com' }) 
       const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '1234'})
-      const deleted = await request(server).delete('/api/events/4').set({ authorization : res.body.token})
+      const deleted = await request(server).delete('/api/events/3').set({ authorization : res.body.token})
       expect(deleted.status).toBe(202)
     })
     it('deletes an event from the database', async () => {
       await request(server).delete('/api/events/1')
       const currentEvents = await db('events')
-      expect(currentEvents).toHaveLength(3)
+      expect(currentEvents).toHaveLength(2)
     })
   })
 })
