@@ -121,7 +121,7 @@ router.get('/:id/items', async (req, res, next) => {
 router.post('/:id/items', async (req, res) => {
     await Events.addItem(req.params.id, req.body)
              .then(item => {
-                 res.status(201).json(item)
+                 res.status(201).json({message: `You have successfully added ${item.item_name} to the list`, item})
              })
              .catch(next)
 })
@@ -133,8 +133,10 @@ router.delete('/:id/items', async (req, res, next) => {
         } else {
             const count = await Events.removeItem(req.params.id, req.body.item_name)
             if (count !== 0) {
-                const items = await Events.findItemsByEvent(req.params.id)
-                res.status(200).json(items)
+                await Events.findItemsByEvent(req.params.id)
+                    .then(item => {
+                        res.status(200).json({ message: `You have succesffully removed an item from the list`, item})
+                    })
             } else {
                 res.status(404).json({ message: 'Item not found'})
             }

@@ -36,7 +36,10 @@ router.get('/:id', (req, res, next) => {
 
   router.delete('/:id', async (req, res, next) => {
       try {
-          res.status(202).json(await Users.remove(req.params.id))
+        await Users.remove(req.params.id)
+            .then(user => {
+                res.status(202).json({ message:`${user.username} successfully removed.`, user})
+            })
       } catch (err) {
           next()
       }

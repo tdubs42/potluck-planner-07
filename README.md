@@ -58,5 +58,5 @@
 | Method   | URL                       | Description                                                                                                  |
 | ------   | --------------            | ---------------------------------------------------------------------------------------------------------    |
 | [GET]    | /api/events/:id/items     | Returns an array filled with items for the event.                                                            |
-| [POST]   | /api/events/:id/items     | Requires a `item_id` and adds the new item to the list of items                                              |
+| [POST]   | /api/events/:id/items     | Requires an `item_name` and a `name` (name of the person bringing the item) and adds the new item to the list of items                                              |
 | [DELETE] | /api/events/:id/items     | Requires `item_name` Removes the item with the specified `item_name` and returns the new list of items.      |
