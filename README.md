@@ -42,6 +42,7 @@
 #### Events: 
 | Method   | URL                 | Description                                                                                                    |
 | ------   | --------------      | ---------------------------------------------------------------------------------------------------------      |
+| [POST]   | /api/events/        | Requires `organizer_id`, `title`, `date` (in the format of mm/dd/yyyy), `time` (in the format of 03:00), and a `location`.  Returns the event object with the specified `event_id`.                                               |
 | [GET]    | /api/events/        | Returns an array filled with event objects.                                                                    |
 | [GET]    | /api/events/:id     | Returns the event object with the specified `event_id`.                                                        |
 | [DELETE] | /api/events/:id     | Removes the event with the specified `event_id` and returns the deleted event.                                 |
