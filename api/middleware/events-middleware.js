@@ -2,6 +2,7 @@ const Events = require('../events/events-model')
 
 module.exports = {
     validateEvent,
+    validateEventId
 }
 
 function validateEvent(req, res, next) {
@@ -16,4 +17,18 @@ function validateEvent(req, res, next) {
     } else {
         next()
     }
+}
+
+async function validateEventId(req, res, next) {
+   try {
+       const event = await Events.findById(req.params.id)
+       if (!event) {
+           res.status(404).json({ message: `Event not found.`})
+       } else {
+           req.event = event
+           next()
+       }
+   } catch (err) {
+       next(err)
+   }
 }

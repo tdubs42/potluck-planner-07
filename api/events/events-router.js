@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Events = require('./events-model')
-const { validateEvent } = require('../middleware/events-middleware')
+const { validateEvent, validateEventId } = require('../middleware/events-middleware')
 
 router.get('/', (req, res, next) => {
     Events.findAll()
@@ -19,6 +19,7 @@ router.get('/:id', (req, res, next) => {
     })
     .catch(next)
 })
+
 
 router.post('/',  (req, res, next) => {
     const newEvent = req.body
@@ -47,17 +48,30 @@ router.put('/:id', (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
     try {
-        res.status(202).json(await Events.remove(req.params.id))
+        await Events.remove(req.params.id)
+            .then(event => {
+                res.status(202).json({message: `You have successfully removed event ${event.title}`, event})
+            })
     } catch (err) {
         next()
     }
 })
 
 // Guests functions
-router.get('/:id/guests', async (req, res, next) => {
+router.get('/:id/guests', validateEventId, async (req, res, next) => {
     await Events.findGuestsByEvent(req.params.id)
         .then(guests => {
             res.status(200).json(guests)
+        })
+        .catch(next)
+})
+
+router.get('/:id/guests/:userId', validateEventId, (req, res, next) => {
+    const id = req.params.id
+    const userId = req.params.user_id
+    Events.findSpecificGuest(id, userId)
+        .then(guest => {
+            res.status(200).json(guest)
         })
         .catch(next)
 })
@@ -70,20 +84,9 @@ router.post('/:id/guests', async (req, res, next) => {
         })
         .catch(next)
 })
-router.put('/:id/guests', (req, res, next) => {
-    const id = req.params.id
-    const changes = req.body
-    Events.updateGuest(id, changes)
-        .then((change) => {
-            if(change === 1) {
-                Events.findById(id)
-                    .then(event => {
-                        res.status(200).json({ message: `Event ${event.title} has been updated`, event})
-                    })
-                    .catch(next)
-            }
-        })
-        .catch(next)
+
+router.put('/:id/guests/:userId', validateEventId, async (req, res, next) => {
+    
 })
 
 router.delete('/:id/guests', async (req, res, next) => {
